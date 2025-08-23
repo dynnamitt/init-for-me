@@ -21,10 +21,15 @@ gh_cache_fetch() {
   if echo $1|grep -q "@";then
     repo=${1%@*}
     ref=${1#*@}
-    #if [ ref = "main" ] || [ $ref = "master" ];then
-    curl_untar $GH_PRE/$repo/archive/$ref.tar.gz $2
+
+    # maybe needed
+    if [ $ref != "main" ] && [ $ref != "master" ];then
+      r_pre="refs/tags/"
+    fi
+      
+    curl_untar $GH_PRE/$repo/archive/${r_pre}${ref}.tar.gz $2
   else
-    echo "No REF given in arg1 <github_rep@REF>"
+    echo "No REF given in arg1 <github_repo@REF>"
   fi
 }
 
