@@ -1,1 +1,11 @@
-kitty
+SRC=$HOME/src-cache
+
+# kitty latest (messy)
+# https://sw.kovidgoyal.net/kitty/build/  
+# see dependencies!!
+
+gh_cache_fetch kovidgoyal/kitty@main $SRC/kitty
+cd $SRC/kitty
+./dev.sh build
+
+# TODO: $PATH
