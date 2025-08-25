@@ -1,6 +1,5 @@
 alias ls="eza --icons"
-alias ll='ls -alF'
-alias la='ls -A'
-alias l='ls -CF'
+
+alias v='NVIM_APPNAME=lazyv nvim'
 
 alias xclipf='xclip -selection clipboard <'
