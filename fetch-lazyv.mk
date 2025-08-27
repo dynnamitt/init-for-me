@@ -6,7 +6,7 @@ share_cache := _share/$(NVIM_APPNAME)
 share_real_path := ~/.local/share/$(NVIM_APPNAME)
 conf_real_path := ~/.config/$(NVIM_APPNAME)
 
-.PHONY: clean_dot_git clean
+.PHONY: clean_dot_git clean relink
 
 $(share_cache)/lazy/LazyVim/init.lua: $(repo_cache)/init.lua
 	@echo "FIRST run ´NVIM_APPNAME=$(NVIM_APPNAME) nvim´ .. and come back to this shell"
@@ -22,6 +22,10 @@ $(repo_cache)/init.lua:
 	git clone https://github.com/LazyVim/starter $(repo_cache)
 	rm -rf $(repo_cache)/.git
 	ln -s $$PWD/$(repo_cache) $(conf_real_path)
+
+relink:
+	ln -sv $$PWD/$(repo_cache) $(conf_real_path)
+	ln -sv $$PWD/$(share_cache)/lazy $(share_real_path)
 
 clean_dot_git:
 	find $(share_cache) -name ".git" -type d -exec echo "Can delete: {}" \;
