@@ -9,12 +9,11 @@ conf_real_path := ~/.config/$(NVIM_APPNAME)
 .PHONY: clean_dot_git clean relink
 
 relink: $(share_cache)/lazy/LazyVim/init.lua 
-	ln -sfv $$PWD/$(repo_cache) $(conf_real_path)
-	ln -sfv $$PWD/$(share_cache)/lazy $(share_real_path)
+	ln -sv $$PWD/$(share_cache)/lazy $(share_real_path)
 	# kitty
 	mkdir -p ~/.config/kitty
-	ln -sfv $$PWD/kitty.conf ~/.config/kitty
-	ln -sfv $$PWD/kitty-themes ~/.config/kitty
+	ln -sv $$PWD/kitty.conf ~/.config/kitty
+	ln -sv $$PWD/kitty-themes ~/.config/kitty
 
 $(share_cache)/lazy/LazyVim/init.lua: $(repo_cache)/init.lua
 	@echo "FIRST run ´NVIM_APPNAME=$(NVIM_APPNAME) nvim´ .. and come back to this shell"
@@ -37,6 +36,7 @@ clean_dot_git:
 	find $(share_cache) -name ".git" -type d -exec rm -rf {} +
 
 clean: 
-	rm -rf $(repo_cache) $(share_cache) $(share_real_path) $(conf_real_path)
+	rm -rf $(repo_cache) $(share_cache) $(share_real_path) $(conf_real_path) \
+		~/.config/kitty/kitty.conf ~/.config/kitty/kitty-themes
 
 
