@@ -9,46 +9,79 @@ vim.opt.showcmd = true
 vim.opt.cmdheight = 2
 vim.opt.showmode = true
 vim.opt.scrolloff = 8					-- scroll page when cursor is 8 lines from top/bottom
-vim.opt.sidescrolloff = 8			
+vim.opt.sidescrolloff = 8	
 
+vim.opt.tabstop = 4        -- Number of spaces that a <Tab> in the file counts for
+vim.opt.shiftwidth = 4     -- Number of spaces to use for each step of (auto)indent
+vim.opt.softtabstop = 4    -- Number of spaces that a <Tab> counts for while editing
+vim.opt.expandtab = true   -- Use spaces instead of tabs
+vim.opt.smartindent = true -- Smart autoindenting when starting a new line
+vim.opt.autoindent = true  -- Copy indent from current line when starting new line
 
-local path_package = vim.fn.stdpath("data") .. "/site"
-local mini_path = path_package .. "/pack/deps/start/mini.nvim"
-if not vim.loop.fs_stat(mini_path) then
-	vim.cmd('echo "Installing `mini.nvim`" | redraw')
-	local clone_cmd = {
-		"git",
-		"clone",
-		"--filter=blob:none",
-		-- Uncomment next line to use 'stable' branch
-		-- '--branch', 'stable',
-		"https://github.com/nvim-mini/mini.nvim",
-		mini_path,
-	}
-	vim.fn.system(clone_cmd)
-	vim.cmd("packadd mini.nvim | helptags ALL")
-	vim.cmd('echo "Installed `mini.nvim`" | redraw')
+vim.opt.swapfile = false
+vim.opt.clipboard = 'unnamed'
+
+vim.keymap.set('n', '<leader>r', ':update<CR>:source $MYVIMRC<CR>', {desc='reload $MYVIMRC'})
+vim.keymap.set('n', '<leader>q', ':quit<CR>',{desc='quit buffer'})
+
+local function gh_cache_packadd(repo,branch,dest,pack_name)
+
+    -- TODO extract pack_name from dest filename()
+	local gh_pre_ = os.getenv('GH_PRE')
+	local gh_pre = gh_pre_ ~= nil and gh_pre_ or 'https://github.com'
+	local url = gh_pre .. '/' .. repo .. '/archive/' .. branch .. '.tar.gz'
+    
+    
+    if vim.uv.fs_stat(dest) then 
+        vim.cmd('echo "' .. dest .. ' exist, abort work" | redraw')
+        return true
+    else
+	    local debug = "Fetch tar from " .. url .. " > " .. dest
+	    vim.cmd('echo "' .. debug .. '" | redraw')
+    end
+	
+	-- Ensure destination directory exists
+	vim.fn.mkdir(dest, 'p')
+    
+	local tar_ = vim.fn.has('mac') == 1 and 'gtar' or 'tar'
+	local fetch_cmd = 'curl -sL ' .. url ..  ' | ' .. tar_ .. ' -xzvf - --strip-component=1 -C ' .. dest 
+	vim.fn.system(fetch_cmd)
+	local exit_code = vim.v.shell_error
+	if exit_code ~= 0 then
+       	local error_msg = "Failed to fetch " .. url .. ": " .. (result or "Unknown error")
+        vim.cmd('echoerr "' .. error_msg:gsub('"', '\\"') .. '"')
+        vim.fn.rmdir(dest)
+        return false
+    else
+        local packname_ = vim.fs.basename(dest)
+        vim.cmd("packadd " .. packname_ .. " | helptags ALL")
+	    vim.cmd('echo "Installed `' .. packname_ .. '`" | redraw')
+	    return true
+    end
 end
 
+local path_package = vim.fn.stdpath("data") .. "/site"
+local my_packs_path = path_package .. "/pack/deps/start/"
+
+gh_cache_packadd( "nvim-mini/mini.nvim", "main", my_packs_path .. 'mini.nvim')
+gh_cache_packadd( "neovim/nvim-lspconfig", "master", my_packs_path .. "nvim.lspconfig")
+gh_cache_packadd( "nvim-treesitter/nvim-treesitter", "master", my_packs_path .. "nvim.treesitter")
+
+vim.lsp.enable({"lua_ls"})
+
 vim.cmd [[
-	colorscheme minicyan
 	set path+=**
+    colorscheme miniautumn
 	filetype plugin on
-	set wildmenu
 ]]
 
 
-local mini_files = require('mini.files')
+vim.cmd("set completeopt+=noselect")
 
-mini_files.setup({})
+require('mini.pick').setup()
+vim.keymap.set('n','<leader>f',':Pick files<CR>', {desc='pick files'})
+vim.keymap.set('n','<leader>h',':Pick help<CR>', {desc='pick help'})
 
-vim.keymap.set('n', '<leader>ff', function()
-  if mini_files.close() then
-    return
-  end
-
-  mini_files.open()
-end, {desc='Files popup'})
 
 local miniclue = require('mini.clue')
 miniclue.setup({ triggers = {
@@ -131,7 +164,6 @@ notify_many_keys('j')
 notify_many_keys('k')
 notify_many_keys('l')
 
-vim.api.nvim_set_keymap('n', '<leader>r', ':source $MYVIMRC<CR>', {desc='reload $MYVIMRC'})
 
 --
 -- -- Tab bindings 
