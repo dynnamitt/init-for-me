@@ -10,6 +10,7 @@ vim.opt.cmdheight = 2
 vim.opt.showmode = true
 vim.opt.scrolloff = 8 -- scroll page when cursor is 8 lines from top/bottom
 vim.opt.sidescrolloff = 8
+vim.opt.relativenumber = true
 
 vim.opt.tabstop = 4        -- Number of spaces that a <Tab> in the file counts for
 vim.opt.shiftwidth = 4     -- Number of spaces to use for each step of (auto)indent
@@ -22,7 +23,8 @@ vim.opt.swapfile = false
 vim.opt.clipboard = 'unnamed'
 
 vim.keymap.set('n', '<leader>r', ':update<CR>:source $MYVIMRC<CR>', { desc = 'reload $MYVIMRC' })
-vim.keymap.set('n', '<leader>q', ':quit<CR>', { desc = 'quit buffer' })
+vim.keymap.set('n', '<leader>w', ':lua vim.lsp.buf.format()<CR>:update<CR>', { desc = 'format & update' })
+vim.keymap.set('n', '<leader>q', ':quit<CR>', { desc = 'quit' })
 
 local function gh_cache_packadd(repo, branch, dest)
     local gh_pre_ = os.getenv('GH_PRE')
@@ -79,7 +81,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
     end
     ,
 })
-vim.keymap.set({'n','v'}, '<leader>l', "", { desc = 'LSP' }) -- Group KEYMAP(s)
+vim.keymap.set({ 'n', 'v' }, '<leader>l', "", { desc = 'LSP' }) -- Group KEYMAP(s)
 vim.keymap.set('n', '<leader>lf', vim.lsp.buf.format, { desc = 'LSP Format' })
 vim.keymap.set('v', '<leader>lf', function()
     vim.lsp.buf.format({ range = true })
