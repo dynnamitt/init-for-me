@@ -57,14 +57,19 @@ local function gh_cache_packadd(repo, branch, dest)
     end
 end
 
-local path_package = vim.fn.stdpath("data") .. "/site"
-local my_packs_path = path_package .. "/pack/deps/start/"
+local my_packs_path = vim.fn.stdpath("data") .. "/site/pack/deps/start/"
 
 gh_cache_packadd("nvim-mini/mini.nvim", "main", my_packs_path .. 'mini.nvim')
 gh_cache_packadd("neovim/nvim-lspconfig", "master", my_packs_path .. "nvim.lspconfig")
 gh_cache_packadd("nvim-treesitter/nvim-treesitter", "master", my_packs_path .. "nvim.treesitter")
+-- TODO download lemminx (not a nvim/lua)
 
-vim.lsp.enable({ "emmylua_ls" })
+-- LSP / Language Server Protocol SETUP --
+vim.lsp.enable({
+    "emmylua_ls",
+    "rust_analyzer",
+    "lemminx" }
+)
 vim.api.nvim_create_autocmd('LspAttach', {
     callback = function(ev)
         local client = vim.lsp.get_client_by_id(ev.data.client_id)
