@@ -12,6 +12,12 @@ vim.opt.scrolloff = 8 -- scroll page when cursor is 8 lines from top/bottom
 vim.opt.sidescrolloff = 8
 vim.opt.relativenumber = true
 
+vim.g.netrw_banner = 0
+vim.g.netrw_keepdir = 0
+vim.g.netrw_sizestyle = "H"
+vim.g.netrw_liststyle = 3
+
+
 vim.opt.tabstop = 4        -- Number of spaces that a <Tab> in the file counts for
 vim.opt.shiftwidth = 4     -- Number of spaces to use for each step of (auto)indent
 vim.opt.softtabstop = 4    -- Number of spaces that a <Tab> counts for while editing
@@ -19,8 +25,17 @@ vim.opt.expandtab = true   -- Use spaces instead of tabs
 vim.opt.smartindent = true -- Smart autoindenting when starting a new line
 vim.opt.autoindent = true  -- Copy indent from current line when starting new line
 
+
 vim.opt.swapfile = false
 vim.opt.clipboard = 'unnamed'
+
+
+vim.cmd [[
+	set path+=**
+    set completeopt+=noselect
+    colorscheme minicyan
+	filetype plugin on
+]]
 
 vim.keymap.set('n', '<leader>r', ':update<CR>:source $MYVIMRC<CR>', { desc = 'reload $MYVIMRC' })
 vim.keymap.set('n', '<leader>w', ':lua vim.lsp.buf.format()<CR>:update<CR>', { desc = 'format & update' })
@@ -32,7 +47,7 @@ local function gh_cache_packadd(repo, branch, dest)
     local url = gh_pre .. '/' .. repo .. '/archive/' .. branch .. '.tar.gz'
 
     if vim.uv.fs_stat(dest) then
-        vim.cmd('echo "' .. dest .. ' exist, abort work" | redraw')
+        vim.cmd('echo "' .. dest .. ' exist, abort fetch" | redraw')
         return true
     else
         local debug = "Fetch tar from " .. url .. " > " .. dest
@@ -61,12 +76,36 @@ end
 
 local my_packs_path = vim.fn.stdpath("data") .. "/site/pack/deps/start/"
 
+-- my packs -----------------
 gh_cache_packadd("nvim-mini/mini.nvim", "main", my_packs_path .. 'mini.nvim')
 gh_cache_packadd("neovim/nvim-lspconfig", "master", my_packs_path .. "nvim.lspconfig")
 gh_cache_packadd("nvim-treesitter/nvim-treesitter", "master", my_packs_path .. "nvim.treesitter")
 -- TODO download lemminx (not a nvim/lua)
 
--- LSP / Language Server Protocol SETUP --
+-- treesitter ----------------------------------------------
+local ts_dynlibs = vim.fn.stdpath("data") .. "/ts-libs"
+vim.fn.mkdir(ts_dynlibs, 'p')
+vim.opt.runtimepath:prepend(ts_dynlibs)
+-- Override for ALL parsers
+local parser_configs = require 'nvim-treesitter.parsers'.get_parser_configs()
+for lang, config in pairs(parser_configs) do
+    config.install_info.path = ts_dynlibs
+end
+
+-- Also set default for future parsers
+require 'nvim-treesitter.configs'.setup {
+    parser_install_dir = ts_dynlibs,
+    -- your other config...
+    highlight = { enable = true },
+    additional_vim_regex_highlighting = false,
+    fold = { enable = true },
+}
+-- Enable folding
+vim.wo.foldmethod = 'expr'
+vim.wo.foldexpr = 'nvim_treesitter#foldexpr()'
+vim.opt.foldenable = false -- Start with folds open
+
+-- LSP / Language Server Protocol ------------------------------
 vim.lsp.enable({
     "emmylua_ls",
     "rust_analyzer",
@@ -87,19 +126,14 @@ vim.keymap.set('v', '<leader>lf', function()
     vim.lsp.buf.format({ range = true })
 end, { desc = 'LSP Format selection' })
 
-vim.cmd [[
-	set path+=**
-    set completeopt+=noselect
-    colorscheme miniautumn
-	filetype plugin on
-
-]]
-
+-- mini.pick ---------------------------------------------------
 require('mini.pick').setup()
 vim.keymap.set('n', '<leader>f', ':Pick files<CR>', { desc = 'pick files' })
 vim.keymap.set('n', '<leader>h', ':Pick help<CR>', { desc = 'pick help' })
+vim.keymap.set('n', '<leader>t', ':Pick treesitter<CR>', { desc = 'treesitter' })
 
 
+-- mini.clue ---------------------------------------------------
 local miniclue = require('mini.clue')
 miniclue.setup({
     triggers = {
@@ -139,10 +173,11 @@ miniclue.setup({
     },
 })
 
-require('mini.icons').setup({})
+require('mini.icons').setup()
+require('mini.statusline').setup()
 require('mini.basics').setup({ extra_ui = true, win_borders = 'dotted' })
-require('mini.extra').setup({})
-require('mini.completion').setup({})
+require('mini.extra').setup()
+require('mini.completion').setup()
 require('mini.indentscope').setup()
 
 local hipatterns = require('mini.hipatterns')

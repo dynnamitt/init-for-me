@@ -12,7 +12,7 @@ fi
 curl_untar(){
   mkdir -p $2
   curl -sL "$1" |\
-    gtar -xvzf - --strip-component=1 -C "$2"
+    tar -xvzf - --strip-component=1 -C "$2"
 }
 
 # gh_cache_fetch <github_repo@ref> <dest-dir>
