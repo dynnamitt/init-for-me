@@ -1,0 +1,7 @@
+#!/bin/bash
+# vim: set ft=bash
+m2=~/.m2/repository
+pre=org/eclipse/lemminx
+ns=${pre//\//.}
+
+exec java -jar ${m2}/${pre}/${ns}/0.31.1-SNAPSHOT/${ns}-0.31.1-SNAPSHOT-uber.jar "$@"

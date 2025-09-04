@@ -109,7 +109,9 @@ vim.opt.foldenable = false -- Start with folds open
 vim.lsp.enable({
     "emmylua_ls",
     "rust_analyzer",
-    "lemminx" }
+    "lemminx",
+    "bashls",
+    }
 )
 vim.api.nvim_create_autocmd('LspAttach', {
     callback = function(ev)
