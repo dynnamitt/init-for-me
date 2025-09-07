@@ -11,6 +11,7 @@ vim.opt.showmode = true
 vim.opt.scrolloff = 8 -- scroll page when cursor is 8 lines from top/bottom
 vim.opt.sidescrolloff = 8
 vim.opt.relativenumber = true
+vim.opt.wrap = false                               -- Don't wrap lines
 
 vim.g.netrw_banner = 0
 vim.g.netrw_keepdir = 0
