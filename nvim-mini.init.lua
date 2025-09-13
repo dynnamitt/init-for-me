@@ -33,13 +33,6 @@ vim.opt.swapfile = false
 vim.opt.clipboard = 'unnamed'
 
 
-vim.cmd [[
-	set path+=**
-    set completeopt+=noselect
-    colorscheme minicyan
-	filetype plugin on
-]]
-
 vim.keymap.set('n', '<leader>m', ':update<CR>:source $MYVIMRC<CR>', { desc = '$MYVIMRC reload' })
 vim.keymap.set('n', '<leader>w', ':lua vim.lsp.buf.format()<CR>:update<CR>', { desc = 'format & update' })
 vim.keymap.set('n', '<leader>q', ':quit<CR>', { desc = 'quit' })
@@ -81,10 +74,21 @@ local my_packs_path = vim.fn.stdpath("data") .. "/site/pack/deps/start/"
 
 -- my packs -----------------
 gh_cache_packadd("nvim-mini/mini.nvim", "main", my_packs_path .. 'mini.nvim')
-gh_cache_packadd("neovim/nvim-lspconfig", "master", my_packs_path .. "nvim.lspconfig")
+gh_cache_packadd("neovim/nvim-lspconfig", "v2.4.0", my_packs_path .. "nvim.lspconfig")
 gh_cache_packadd("nvim-treesitter/nvim-treesitter", "master", my_packs_path .. "nvim.treesitter")
 -- TODO download lemminx (not a nvim/lua)
 
+-- now I can use below
+--
+--
+--  
+
+vim.cmd [[
+	set path+=**
+    set completeopt+=noselect
+    colorscheme minicyan
+	filetype plugin on
+]]
 -- treesitter ----------------------------------------------
 local ts_dynlibs = vim.fn.stdpath("data") .. "/ts-libs"
 vim.fn.mkdir(ts_dynlibs, 'p')
