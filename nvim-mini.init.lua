@@ -1,5 +1,7 @@
 vim.g.mapleader = " " -- sets leader key
 
+vim.opt.mouse = "a"
+
 -- sensible defaults by mini.basics
 -- Others see: https://www.youtube.com/watch?v=I5kT2c2XX38
 vim.opt.winborder = 'rounded'
@@ -11,7 +13,7 @@ vim.opt.showmode = true
 vim.opt.scrolloff = 8 -- scroll page when cursor is 8 lines from top/bottom
 vim.opt.sidescrolloff = 8
 vim.opt.relativenumber = true
-vim.opt.wrap = false                               -- Don't wrap lines
+vim.opt.wrap = false -- Don't wrap lines
 
 vim.g.netrw_banner = 0
 vim.g.netrw_keepdir = 0
@@ -20,7 +22,7 @@ vim.g.netrw_liststyle = 3
 
 
 vim.opt.tabstop = 4        -- Number of spaces that a <Tab> in the file counts for
-vim.opt.shiftwidth = 4     -- Number of spaces to use for each step of (auto)indent
+vim.opt.shiftwidth = 4     -- Number of spaces to use for each step of ( auto)indent
 vim.opt.softtabstop = 4    -- Number of spaces that a <Tab> counts for while editing
 vim.opt.expandtab = true   -- Use spaces instead of tabs
 vim.opt.smartindent = true -- Smart autoindenting when starting a new line
@@ -38,7 +40,7 @@ vim.cmd [[
 	filetype plugin on
 ]]
 
-vim.keymap.set('n', '<leader>r', ':update<CR>:source $MYVIMRC<CR>', { desc = 'reload $MYVIMRC' })
+vim.keymap.set('n', '<leader>m', ':update<CR>:source $MYVIMRC<CR>', { desc = '$MYVIMRC reload' })
 vim.keymap.set('n', '<leader>w', ':lua vim.lsp.buf.format()<CR>:update<CR>', { desc = 'format & update' })
 vim.keymap.set('n', '<leader>q', ':quit<CR>', { desc = 'quit' })
 
@@ -60,7 +62,7 @@ local function gh_cache_packadd(repo, branch, dest)
 
     local tar_ = vim.fn.has('mac') == 1 and 'gtar' or 'tar'
     local fetch_cmd = 'curl -sL ' .. url .. ' | ' .. tar_ .. ' -xzvf - --strip-component=1 -C ' .. dest
-    vim.fn.system(fetch_cmd)
+    local result = vim.fn.system(fetch_cmd)
     local exit_code = vim.v.shell_error
     if exit_code ~= 0 then
         local error_msg = "Failed to fetch " .. url .. ": " .. (result or "Unknown error")
@@ -112,7 +114,8 @@ vim.lsp.enable({
     "rust_analyzer",
     "lemminx",
     "bashls",
-    }
+    "ts_ls",
+}
 )
 vim.api.nvim_create_autocmd('LspAttach', {
     callback = function(ev)
@@ -131,9 +134,12 @@ end, { desc = 'LSP Format selection' })
 
 -- mini.pick ---------------------------------------------------
 require('mini.pick').setup()
-vim.keymap.set('n', '<leader>f', ':Pick files<CR>', { desc = 'pick files' })
-vim.keymap.set('n', '<leader>h', ':Pick help<CR>', { desc = 'pick help' })
+vim.keymap.set('n', '<leader>f', ':Pick files<CR>', { desc = 'files' })
+vim.keymap.set('n', '<leader>h', ':Pick help<CR>', { desc = 'help' })
 vim.keymap.set('n', '<leader>t', ':Pick treesitter<CR>', { desc = 'treesitter' })
+vim.keymap.set('n', '<leader>b', ':Pick buffers<CR>', { desc = 'buffers' })
+vim.keymap.set('n', '<leader>r', ':Pick registers<CR>', { desc = 'registers' })
+vim.keymap.set('n', '<leader>d', ':Pick diagnostic<CR>', { desc = 'diagnostic' })
 
 
 -- mini.clue ---------------------------------------------------
