@@ -33,10 +33,10 @@ git_main_branch__k () {
 	return 1
 }
 alias gco='git checkout'
-alias ggpush='git push origin "$(git_current_branch_k)"'
+alias ggpush='git push origin "$(git_current_branch__k)"'
 alias gcm='git checkout $(git_main_branch__k)' 
 alias ga='git add' 
 alias gc='git commit' 
 alias gl='git log' 
 alias gst='git status'
-alias ggpull='git pull origin "$(git_current_branch_k)"'
+alias ggpull='git pull origin "$(git_current_branch__k)"'
