@@ -5,10 +5,38 @@ alias v='nvim'
 alias xclipf='xclip -selection clipboard <'
 
 # git
+git_current_branch__k () {
+    # steal from ohmyzsh
+	local ref
+	ref=$(git symbolic-ref --quiet HEAD 2> /dev/null) 
+	local ret=$? 
+	if [[ $ret != 0 ]]
+	then
+		[[ $ret == 128 ]] && return
+		ref=$(git rev-parse --short HEAD 2> /dev/null)  || return
+	fi
+	echo ${ref#refs/heads/}
+}
+git_main_branch__k () {
+    # steal from ohmyzsh
+	command git rev-parse --git-dir &> /dev/null || return
+	local ref
+	for ref in refs/{heads,remotes/{origin,upstream}}/{main,trunk,mainline,default,stable,master}
+	do
+		if command git show-ref -q --verify $ref
+		then
+			echo ${ref:t}
+			return 0
+		fi
+	done
+	echo master
+	return 1
+}
 alias gco='git checkout'
-alias ggpush='git push origin "$(git_current_branch)"'
-alias gcm='git checkout $(git_main_branch)' 
+alias ggpush='git push origin "$(git_current_branch_k)"'
+alias gcm='git checkout $(git_main_branch__k)' 
 alias ga='git add' 
+alias gc='git commit' 
 alias gl='git log' 
 alias gst='git status'
-alias ggpull='git pull origin "$(git_current_branch)"'
+alias ggpull='git pull origin "$(git_current_branch_k)"'
