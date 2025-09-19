@@ -8,7 +8,7 @@ vim.opt.winborder = 'rounded'
 vim.opt.expandtab = false -- expand tab
 vim.opt.smartindent = true
 vim.opt.showcmd = true
-vim.opt.cmdheight = 2
+vim.opt.cmdheight = 1
 vim.opt.showmode = true
 vim.opt.scrolloff = 8 -- scroll page when cursor is 8 lines from top/bottom
 vim.opt.sidescrolloff = 8
@@ -76,12 +76,14 @@ local my_packs_path = vim.fn.stdpath("data") .. "/site/pack/deps/start/"
 gh_cache_packadd("nvim-mini/mini.nvim", "main", my_packs_path .. 'mini.nvim')
 gh_cache_packadd("neovim/nvim-lspconfig", "v2.4.0", my_packs_path .. "nvim.lspconfig")
 gh_cache_packadd("nvim-treesitter/nvim-treesitter", "master", my_packs_path .. "nvim.treesitter")
--- TODO download lemminx (not a nvim/lua)
+gh_cache_packadd("kndndrj/nvim-dbee", "v0.1.9", my_packs_path .. "nvim-dbee")
+gh_cache_packadd("folke/noice.nvim", "main", my_packs_path .. "noice.nvim")
+gh_cache_packadd("MunifTanjim/nui.nvim", "main", my_packs_path .. "nui.nvim")
 
 -- now I can use below
 --
 --
---  
+--
 
 vim.cmd [[
 	set path+=**
@@ -89,6 +91,9 @@ vim.cmd [[
     colorscheme minicyan
 	filetype plugin on
 ]]
+-- noice ---------------------------------------------------
+require("noice").setup()
+
 -- treesitter ----------------------------------------------
 local ts_dynlibs = vim.fn.stdpath("data") .. "/ts-libs"
 vim.fn.mkdir(ts_dynlibs, 'p')
