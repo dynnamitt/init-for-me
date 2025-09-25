@@ -1,0 +1,13 @@
+#!/bin/sh
+ARCH=${ARCH:-x86_64}
+GH_PRE=${GH_PRE:-https://github.com}
+TMPDIR=${TMPDIR:-/tmp/}    # mac friendly
+
+sudo su
+
+# ---- kitty -------------------
+K_VER=0.42.2
+K_FILE=kitty-$K_VER-$ARCH.txz
+mkdir -p /opt/kitty
+curl -sL $GH_PRE/kovidgoyal/kitty/releases/download/v$K_VER/$K_FILE > ${TMPDIR}${K_FILE}
+tar -xf ${TMPDIR}${K_FILE} -C /opt/kitty
